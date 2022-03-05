@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   RUNNING_ON_WINDOWS = RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/i
 
   CENTRAL_DIRECTORY_ENTRY_SIGNATURE = 0x02014b50
@@ -112,4 +113,5 @@ module Zip
     COMPRESSION_METHOD_PPMD        => 'PPMd version I, Rev 1',
     COMPRESSION_METHOD_AES         => 'AES encryption'
   }.freeze
+ end
 end

@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # Info-ZIP Extra for Zip64 size
   class ExtraField::Zip64 < ExtraField::Generic
     attr_accessor :original_size, :compressed_size, :relative_header_offset, :disk_start_number
@@ -67,4 +68,5 @@ module Zip
       packed
     end
   end
+ end
 end

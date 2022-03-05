@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module IOExtras
     # Implements many of the convenience methods of IO
     # such as gets, getc, readline and readlines
@@ -119,4 +120,5 @@ module Zip
       alias eof? eof
     end
   end
+ end
 end

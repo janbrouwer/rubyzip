@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class NullCompressor < Compressor #:nodoc:all
     include Singleton
 
@@ -8,6 +9,7 @@ module Zip
 
     attr_reader :size, :compressed_size
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

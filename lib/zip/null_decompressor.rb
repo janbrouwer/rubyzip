@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module NullDecompressor #:nodoc:all
     module_function
 
@@ -12,6 +13,7 @@ module Zip
 
     alias eof? eof
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

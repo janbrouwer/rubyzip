@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # InputStream is the basic class for reading zip entries in a
   # zip file. It is possible to create a InputStream object directly,
   # passing the zip file name to the constructor, but more often than not
@@ -41,7 +42,7 @@ module Zip
   class InputStream
     CHUNK_SIZE = 32_768
 
-    include ::Zip::IOExtras::AbstractInputStream
+    include ::BimTools::Zip::IOExtras::AbstractInputStream
 
     # Opens the indicated zip file. An exception is thrown
     # if the specified offset in the specified filename is
@@ -52,8 +53,8 @@ module Zip
     def initialize(context, offset = 0, decrypter = nil)
       super()
       @archive_io    = get_io(context, offset)
-      @decompressor  = ::Zip::NullDecompressor
-      @decrypter     = decrypter || ::Zip::NullDecrypter.new
+      @decompressor  = ::BimTools::Zip::NullDecompressor
+      @decrypter     = decrypter || ::BimTools::Zip::NullDecrypter.new
       @current_entry = nil
     end
 
@@ -102,7 +103,7 @@ module Zip
 
       def open_buffer(filename_or_io, offset = 0)
         warn 'open_buffer is deprecated!!! Use open instead!'
-        ::Zip::InputStream.open(filename_or_io, offset)
+        ::BimTools::Zip::InputStream.open(filename_or_io, offset)
       end
     end
 
@@ -121,7 +122,7 @@ module Zip
     end
 
     def open_entry
-      @current_entry = ::Zip::Entry.read_local_entry(@archive_io)
+      @current_entry = ::BimTools::Zip::Entry.read_local_entry(@archive_io)
       if @current_entry && @current_entry.encrypted? && @decrypter.kind_of?(NullEncrypter)
         raise Error, 'password required to decode zip file'
       end
@@ -131,7 +132,7 @@ module Zip
         && @current_entry.size == 0 && !@complete_entry
         raise GPFBit3Error,
               'General purpose flag Bit 3 is set so not possible to get proper info from local header.' \
-              'Please use ::Zip::File instead of ::Zip::InputStream'
+              'Please use ::BimTools::Zip::File instead of ::BimTools::Zip::InputStream'
       end
       @decrypted_io = get_decrypted_io
       @decompressor = get_decompressor
@@ -143,11 +144,11 @@ module Zip
       header = @archive_io.read(@decrypter.header_bytesize)
       @decrypter.reset!(header)
 
-      ::Zip::DecryptedIo.new(@archive_io, @decrypter)
+      ::BimTools::Zip::DecryptedIo.new(@archive_io, @decrypter)
     end
 
     def get_decompressor
-      return ::Zip::NullDecompressor if @current_entry.nil?
+      return ::BimTools::Zip::NullDecompressor if @current_entry.nil?
 
       decompressed_size =
         if @current_entry.incomplete? && @current_entry.crc == 0 && @current_entry.size == 0 && @complete_entry
@@ -156,9 +157,9 @@ module Zip
           @current_entry.size
         end
 
-      decompressor_class = ::Zip::Decompressor.find_by_compression_method(@current_entry.compression_method)
+      decompressor_class = ::BimTools::Zip::Decompressor.find_by_compression_method(@current_entry.compression_method)
       if decompressor_class.nil?
-        raise ::Zip::CompressionMethodError,
+        raise ::BimTools::Zip::CompressionMethodError,
               "Unsupported compression method #{@current_entry.compression_method}"
       end
 
@@ -173,6 +174,7 @@ module Zip
       @decompressor.eof
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

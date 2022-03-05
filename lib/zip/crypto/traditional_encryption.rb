@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module TraditionalEncryption
     def initialize(password)
       @password = password
@@ -92,6 +93,7 @@ module Zip
       num
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

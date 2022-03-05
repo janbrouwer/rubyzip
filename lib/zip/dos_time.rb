@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class DOSTime < Time #:nodoc:all
     # MS-DOS File Date and Time format as used in Interrupt 21H Function 57H:
 
@@ -46,6 +47,7 @@ module Zip
       end
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

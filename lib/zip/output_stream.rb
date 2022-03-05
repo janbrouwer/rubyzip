@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # ZipOutputStream is the basic class for writing zip files. It is
   # possible to create a ZipOutputStream object directly, passing
   # the zip file name to the constructor, but more often than not
@@ -18,7 +19,7 @@ module Zip
   # class.
 
   class OutputStream
-    include ::Zip::IOExtras::AbstractOutputStream
+    include ::BimTools::Zip::IOExtras::AbstractOutputStream
 
     attr_accessor :comment
 
@@ -191,6 +192,7 @@ module Zip
       self
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

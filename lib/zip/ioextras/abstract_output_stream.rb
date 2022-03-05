@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module IOExtras
     # Implements many of the output convenience methods of IO.
     # relies on <<
@@ -40,4 +41,5 @@ module Zip
       end
     end
   end
+ end
 end

@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class Inflater < Decompressor #:nodoc:all
     def initialize(*args)
       super
@@ -38,7 +39,7 @@ module Zip
         retry
       end
     rescue Zlib::Error
-      raise(::Zip::DecompressionError, 'zlib error while inflating')
+      raise(::BimTools::Zip::DecompressionError, 'zlib error while inflating')
     end
 
     def input_finished?
@@ -46,7 +47,8 @@ module Zip
     end
   end
 
-  ::Zip::Decompressor.register(::Zip::COMPRESSION_METHOD_DEFLATE, ::Zip::Inflater)
+  ::BimTools::Zip::Decompressor.register(::BimTools::Zip::COMPRESSION_METHOD_DEFLATE, ::BimTools::Zip::Inflater)
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

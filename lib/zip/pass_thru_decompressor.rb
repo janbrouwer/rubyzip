@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class PassThruDecompressor < Decompressor #:nodoc:all
     def initialize(*args)
       super
@@ -23,7 +24,8 @@ module Zip
     alias eof? eof
   end
 
-  ::Zip::Decompressor.register(::Zip::COMPRESSION_METHOD_STORE, ::Zip::PassThruDecompressor)
+  ::BimTools::Zip::Decompressor.register(::BimTools::Zip::COMPRESSION_METHOD_STORE, ::BimTools::Zip::PassThruDecompressor)
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

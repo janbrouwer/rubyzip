@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class DecryptedIo #:nodoc:all
     CHUNK_SIZE = 32_768
 
@@ -37,4 +38,5 @@ module Zip
       @decrypter.decrypt(@io.read(CHUNK_SIZE))
     end
   end
+ end
 end

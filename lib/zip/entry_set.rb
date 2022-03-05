@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class EntrySet #:nodoc:all
     include Enumerable
     attr_accessor :entry_set, :entry_order
@@ -70,17 +71,18 @@ module Zip
     protected
 
     def sorted_entries
-      ::Zip.sort_entries ? Hash[@entry_set.sort] : @entry_set
+       ::BimTools::Zip.sort_entries ? Hash[@entry_set.sort] : @entry_set
     end
 
     private
 
     def to_key(entry)
       k = entry.to_s.chomp('/')
-      k.downcase! if ::Zip.case_insensitive_match
+      k.downcase! if  ::BimTools::Zip.case_insensitive_match
       k
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

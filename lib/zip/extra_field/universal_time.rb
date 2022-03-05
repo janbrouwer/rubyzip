@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # Info-ZIP Additional timestamp field
   class ExtraField::UniversalTime < ExtraField::Generic
     HEADER_ID = 'UT'
@@ -45,13 +46,13 @@ module Zip
       # Parse the timestamps, in order, based on which flags are set.
       return if times[0].nil?
 
-      @mtime ||= ::Zip::DOSTime.at(times.shift) unless @flag & MTIME_MASK == 0
+      @mtime ||= ::BimTools::Zip::DOSTime.at(times.shift) unless @flag & MTIME_MASK == 0
       return if times[0].nil?
 
-      @atime ||= ::Zip::DOSTime.at(times.shift) unless @flag & ATIME_MASK == 0
+      @atime ||= ::BimTools::Zip::DOSTime.at(times.shift) unless @flag & ATIME_MASK == 0
       return if times[0].nil?
 
-      @ctime ||= ::Zip::DOSTime.at(times.shift) unless @flag & CTIME_MASK == 0
+      @ctime ||= ::BimTools::Zip::DOSTime.at(times.shift) unless @flag & CTIME_MASK == 0
     end
 
     def ==(other)
@@ -74,4 +75,5 @@ module Zip
       s
     end
   end
+ end
 end

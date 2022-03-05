@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class Decompressor #:nodoc:all
     CHUNK_SIZE = 32_768
 
@@ -24,6 +25,7 @@ module Zip
       @decompressed_size = decompressed_size
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class PassThruCompressor < Compressor #:nodoc:all
     def initialize(output_stream)
       super()
@@ -16,6 +17,7 @@ module Zip
 
     attr_reader :size, :crc
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard
