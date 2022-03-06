@@ -11,7 +11,7 @@ class PathTraversalTest < MiniTest::Test
   end
 
   def extract_paths(zip_path, entries)
-    ::Zip::File.open(::File.join(TEST_FILE_ROOT, zip_path)) do |zip|
+    ::BimTools::Zip::File.open(::File.join(TEST_FILE_ROOT, zip_path)) do |zip|
       entries.each do |entry, test|
         if test == :error
           assert_raises(Errno::ENOENT) do

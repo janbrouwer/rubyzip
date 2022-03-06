@@ -36,9 +36,9 @@ module BimTools
                        else
                          ::File.new(@file_name, 'wb')
                        end
-      @entry_set = ::Zip::EntrySet.new
-      @compressor = ::Zip::NullCompressor.instance
-      @encrypter = encrypter || ::Zip::NullEncrypter.new
+      @entry_set = ::BimTools::Zip::EntrySet.new
+      @compressor = ::BimTools::Zip::NullCompressor.instance
+      @encrypter = encrypter || ::BimTools::Zip::NullEncrypter.new
       @closed = false
       @current_entry = nil
       @comment = nil
@@ -119,7 +119,7 @@ module BimTools
       @compressor = NullCompressor.instance
       entry.get_raw_input_stream do |is|
         is.seek(src_pos, IO::SEEK_SET)
-        ::Zip::Entry.read_local_entry(is)
+        ::BimTools::Zip::Entry.read_local_entry(is)
         IOExtras.copy_stream_n(@output_stream, is, entry.compressed_size)
       end
       @compressor = NullCompressor.instance
@@ -140,7 +140,7 @@ module BimTools
       @output_stream << @encrypter.data_descriptor(@current_entry.crc, @current_entry.compressed_size, @current_entry.size)
       @current_entry.gp_flags |= @encrypter.gp_flags
       @current_entry = nil
-      @compressor = ::Zip::NullCompressor.instance
+      @compressor = ::BimTools::Zip::NullCompressor.instance
     end
 
     def init_next_entry(entry, level = Zip.default_compression)
@@ -155,11 +155,11 @@ module BimTools
     def get_compressor(entry, level)
       case entry.compression_method
       when Entry::DEFLATED
-        ::Zip::Deflater.new(@output_stream, level, @encrypter)
+        ::BimTools::Zip::Deflater.new(@output_stream, level, @encrypter)
       when Entry::STORED
-        ::Zip::PassThruCompressor.new(@output_stream)
+        ::BimTools::Zip::PassThruCompressor.new(@output_stream)
       else
-        raise ::Zip::CompressionMethodError,
+        raise ::BimTools::Zip::CompressionMethodError,
               "Invalid compression method: '#{entry.compression_method}'"
       end
     end

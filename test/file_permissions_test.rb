@@ -46,7 +46,7 @@ class FilePermissionsTest < MiniTest::Test
   end
 
   def create_files
-    ::Zip::File.open(ZIPNAME, ::Zip::File::CREATE) do |zip|
+    ::BimTools::Zip::File.open(ZIPNAME, ::BimTools::Zip::File::CREATE) do |zip|
       zip.comment = 'test'
     end
 

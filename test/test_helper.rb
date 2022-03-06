@@ -126,7 +126,7 @@ module AssertEntry
   end
 
   def assert_test_zip_contents(zip_file)
-    ::Zip::InputStream.open(zip_file.zip_name) do |zis|
+    ::BimTools::Zip::InputStream.open(zip_file.zip_name) do |zis|
       assert_stream_contents(zis, zip_file)
     end
   end
@@ -141,7 +141,7 @@ end
 
 module CrcTest
   class TestOutputStream
-    include ::Zip::IOExtras::AbstractOutputStream
+    include ::BimTools::Zip::IOExtras::AbstractOutputStream
 
     attr_accessor :buffer
 
@@ -217,7 +217,7 @@ module ZipEntryData
   TEST_COMPRESSED_SIZE = 1234
   TEST_CRC = 325_324
   TEST_EXTRA = 'Some data here'
-  TEST_COMPRESSIONMETHOD = ::Zip::Entry::DEFLATED
+  TEST_COMPRESSIONMETHOD = ::BimTools::Zip::Entry::DEFLATED
   TEST_NAME = 'entry name'
   TEST_SIZE = 8432
   TEST_ISDIRECTORY = false

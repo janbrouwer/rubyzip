@@ -6,7 +6,7 @@ class ZipUnicodeFileNamesAndComments < MiniTest::Test
   def test_unicode_file_name
     file_entrys = ['текстовыйфайл.txt', 'Résumé.txt', '슬레이어스휘.txt']
     directory_entrys = ['папка/текстовыйфайл.txt', 'Résumé/Résumé.txt', '슬레이어스휘/슬레이어스휘.txt']
-    stream = ::Zip::OutputStream.open(FILENAME) do |io|
+    stream = ::BimTools::Zip::OutputStream.open(FILENAME) do |io|
       file_entrys.each do |filename|
         io.put_next_entry(filename)
         io.write(filename)
@@ -17,7 +17,7 @@ class ZipUnicodeFileNamesAndComments < MiniTest::Test
       end
     end
     assert(!stream.nil?)
-    ::Zip::InputStream.open(FILENAME) do |io|
+    ::BimTools::Zip::InputStream.open(FILENAME) do |io|
       file_entrys.each do |filename|
         entry = io.get_next_entry
         entry_name = entry.name
@@ -33,7 +33,7 @@ class ZipUnicodeFileNamesAndComments < MiniTest::Test
     end
 
     ::Zip.force_entry_names_encoding = 'UTF-8'
-    ::Zip::File.open(FILENAME) do |zip|
+    ::BimTools::Zip::File.open(FILENAME) do |zip|
       file_entrys.each do |filename|
         refute_nil(zip.find_entry(filename))
       end
@@ -48,11 +48,11 @@ class ZipUnicodeFileNamesAndComments < MiniTest::Test
 
   def test_unicode_comment
     str = '渠道升级'
-    ::Zip::File.open(FILENAME, Zip::File::CREATE) do |z|
+    ::BimTools::Zip::File.open(FILENAME, Zip::File::CREATE) do |z|
       z.comment = str
     end
 
-    ::Zip::File.open(FILENAME) do |z|
+    ::BimTools::Zip::File.open(FILENAME) do |z|
       assert(z.comment.force_encoding('UTF-8') == str)
     end
     ::File.unlink(FILENAME)

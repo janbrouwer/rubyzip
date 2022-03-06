@@ -19,7 +19,7 @@ class ZipSettingsTest < MiniTest::Test
 
   def open_zip(&a_proc)
     refute_nil(a_proc)
-    ::Zip::File.open(TestZipFile::TEST_ZIP4.zip_name, &a_proc)
+    ::BimTools::Zip::File.open(TestZipFile::TEST_ZIP4.zip_name, &a_proc)
   end
 
   def extract_test_dir(&a_proc)
@@ -44,8 +44,8 @@ class ZipSettingsTest < MiniTest::Test
   def test_false_continue_on_exists_proc
     Zip.continue_on_exists_proc = false
 
-    assert_raises(::Zip::EntryExistsError) do
-      ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    assert_raises(::BimTools::Zip::EntryExistsError) do
+      ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
         zf.add(zf.entries.first.name, 'test/data/file2.txt')
       end
     end
@@ -56,12 +56,12 @@ class ZipSettingsTest < MiniTest::Test
 
     replaced_entry = nil
 
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       replaced_entry = zf.entries.first.name
       zf.add(replaced_entry, 'test/data/file2.txt')
     end
 
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_contains(zf, replaced_entry, 'test/data/file2.txt')
     end
   end
@@ -71,7 +71,7 @@ class ZipSettingsTest < MiniTest::Test
     Zip.warn_invalid_date = false
 
     assert_output('', '') do
-      ::Zip::File.open(test_file) do |_zf|
+      ::BimTools::Zip::File.open(test_file) do |_zf|
       end
     end
   end
@@ -81,7 +81,7 @@ class ZipSettingsTest < MiniTest::Test
     Zip.warn_invalid_date = true
 
     assert_output('', /invalid date\/time in zip entry/) do
-      ::Zip::File.open(test_file) do |_zf|
+      ::BimTools::Zip::File.open(test_file) do |_zf|
       end
     end
   end

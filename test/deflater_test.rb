@@ -35,7 +35,7 @@ class DeflaterTest < MiniTest::Test
   end
 
   def test_data_error
-    assert_raises(::Zip::DecompressionError) do
+    assert_raises(::BimTools::Zip::DecompressionError) do
       inflate('test/data/file1.txt.corrupt.deflatedData')
     end
   end
@@ -48,7 +48,7 @@ class DeflaterTest < MiniTest::Test
 
   def deflate(data, filename)
     File.open(filename, 'wb') do |file|
-      deflater = ::Zip::Deflater.new(file)
+      deflater = ::BimTools::Zip::Deflater.new(file)
       deflater << data
       deflater.finish
       assert_equal(deflater.size, data.size)
@@ -58,12 +58,12 @@ class DeflaterTest < MiniTest::Test
 
   def inflate(filename)
     File.open(filename, 'rb') do |file|
-      inflater = ::Zip::Inflater.new(file)
+      inflater = ::BimTools::Zip::Inflater.new(file)
       inflater.read
     end
   end
 
   def test_crc
-    run_crc_test(::Zip::Deflater)
+    run_crc_test(::BimTools::Zip::Deflater)
   end
 end

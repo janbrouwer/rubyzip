@@ -7,7 +7,7 @@ class ZipFileExtractDirectoryTest < MiniTest::Test
 
   def open_zip(&a_proc)
     assert(!a_proc.nil?)
-    ::Zip::File.open(TestZipFile::TEST_ZIP4.zip_name, &a_proc)
+    ::BimTools::Zip::File.open(TestZipFile::TEST_ZIP4.zip_name, &a_proc)
   end
 
   def extract_test_dir(&a_proc)
@@ -36,7 +36,7 @@ class ZipFileExtractDirectoryTest < MiniTest::Test
 
   def test_extract_directory_exists_as_file
     File.open(TEST_OUT_NAME, 'w') { |f| f.puts 'something' }
-    assert_raises(::Zip::DestinationFileExistsError) { extract_test_dir }
+    assert_raises(::BimTools::Zip::DestinationFileExistsError) { extract_test_dir }
   end
 
   def test_extract_directory_exists_as_file_overwrite

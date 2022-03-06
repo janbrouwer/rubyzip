@@ -2,16 +2,16 @@ require 'test_helper'
 
 class ZipEntrySetTest < MiniTest::Test
   ZIP_ENTRIES = [
-    ::Zip::Entry.new('zipfile.zip', 'name1', 'comment1'),
-    ::Zip::Entry.new('zipfile.zip', 'name3', 'comment1'),
-    ::Zip::Entry.new('zipfile.zip', 'name2', 'comment1'),
-    ::Zip::Entry.new('zipfile.zip', 'name4', 'comment1'),
-    ::Zip::Entry.new('zipfile.zip', 'name5', 'comment1'),
-    ::Zip::Entry.new('zipfile.zip', 'name6', 'comment1')
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name1', 'comment1'),
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name3', 'comment1'),
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name2', 'comment1'),
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name4', 'comment1'),
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name5', 'comment1'),
+    ::BimTools::Zip::Entry.new('zipfile.zip', 'name6', 'comment1')
   ]
 
   def setup
-    @zip_entry_set = ::Zip::EntrySet.new(ZIP_ENTRIES)
+    @zip_entry_set = ::BimTools::Zip::EntrySet.new(ZIP_ENTRIES)
   end
 
   def teardown
@@ -20,20 +20,20 @@ class ZipEntrySetTest < MiniTest::Test
 
   def test_include
     assert(@zip_entry_set.include?(ZIP_ENTRIES.first))
-    assert(!@zip_entry_set.include?(::Zip::Entry.new('different.zip', 'different', 'aComment')))
+    assert(!@zip_entry_set.include?(::BimTools::Zip::Entry.new('different.zip', 'different', 'aComment')))
   end
 
   def test_size
     assert_equal(ZIP_ENTRIES.size, @zip_entry_set.size)
     assert_equal(ZIP_ENTRIES.size, @zip_entry_set.length)
-    @zip_entry_set << ::Zip::Entry.new('a', 'b', 'c')
+    @zip_entry_set << ::BimTools::Zip::Entry.new('a', 'b', 'c')
     assert_equal(ZIP_ENTRIES.size + 1, @zip_entry_set.length)
   end
 
   def test_add
-    zes = ::Zip::EntrySet.new
-    entry1 = ::Zip::Entry.new('zf.zip', 'name1')
-    entry2 = ::Zip::Entry.new('zf.zip', 'name2')
+    zes = ::BimTools::Zip::EntrySet.new
+    entry1 = ::BimTools::Zip::Entry.new('zf.zip', 'name1')
+    entry2 = ::BimTools::Zip::Entry.new('zf.zip', 'name2')
     zes << entry1
     assert(zes.include?(entry1))
     zes.push(entry2)
@@ -69,12 +69,12 @@ class ZipEntrySetTest < MiniTest::Test
     entries = [::Zip::Entry.new('zipfile.zip', 'MiXeDcAsEnAmE', 'comment1')]
 
     ::Zip.case_insensitive_match = true
-    zip_entry_set = ::Zip::EntrySet.new(entries)
+    zip_entry_set = ::BimTools::Zip::EntrySet.new(entries)
     assert_equal(entries[0], zip_entry_set.find_entry('MiXeDcAsEnAmE'))
     assert_equal(entries[0], zip_entry_set.find_entry('mixedcasename'))
 
     ::Zip.case_insensitive_match = false
-    zip_entry_set = ::Zip::EntrySet.new(entries)
+    zip_entry_set = ::BimTools::Zip::EntrySet.new(entries)
     assert_equal(entries[0], zip_entry_set.find_entry('MiXeDcAsEnAmE'))
     assert_nil(zip_entry_set.find_entry('mixedcasename'))
   end
@@ -96,7 +96,7 @@ class ZipEntrySetTest < MiniTest::Test
   end
 
   def test_compound
-    new_entry = ::Zip::Entry.new('zf.zip', 'new entry', "new entry's comment")
+    new_entry = ::BimTools::Zip::Entry.new('zf.zip', 'new entry', "new entry's comment")
     assert_equal(ZIP_ENTRIES.size, @zip_entry_set.size)
     @zip_entry_set << new_entry
     assert_equal(ZIP_ENTRIES.size + 1, @zip_entry_set.size)
@@ -117,11 +117,11 @@ class ZipEntrySetTest < MiniTest::Test
 
   def test_parent
     entries = [
-      ::Zip::Entry.new('zf.zip', 'a/'),
-      ::Zip::Entry.new('zf.zip', 'a/b/'),
-      ::Zip::Entry.new('zf.zip', 'a/b/c/')
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b/'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b/c/')
     ]
-    entry_set = ::Zip::EntrySet.new(entries)
+    entry_set = ::BimTools::Zip::EntrySet.new(entries)
 
     assert_nil(entry_set.parent(entries[0]))
     assert_equal(entries[0], entry_set.parent(entries[1]))
@@ -136,12 +136,12 @@ class ZipEntrySetTest < MiniTest::Test
 
   def test_glob2
     entries = [
-      ::Zip::Entry.new('zf.zip', 'a/'),
-      ::Zip::Entry.new('zf.zip', 'a/b/b1'),
-      ::Zip::Entry.new('zf.zip', 'a/b/c/'),
-      ::Zip::Entry.new('zf.zip', 'a/b/c/c1')
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b/b1'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b/c/'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b/c/c1')
     ]
-    entry_set = ::Zip::EntrySet.new(entries)
+    entry_set = ::BimTools::Zip::EntrySet.new(entries)
 
     assert_equal(entries[0, 1], entry_set.glob('*'))
     # assert_equal(entries[FIXME], entry_set.glob("**"))
@@ -152,11 +152,11 @@ class ZipEntrySetTest < MiniTest::Test
 
   def test_glob3
     entries = [
-      ::Zip::Entry.new('zf.zip', 'a/a'),
-      ::Zip::Entry.new('zf.zip', 'a/b'),
-      ::Zip::Entry.new('zf.zip', 'a/c')
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/a'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/b'),
+      ::BimTools::Zip::Entry.new('zf.zip', 'a/c')
     ]
-    entry_set = ::Zip::EntrySet.new(entries)
+    entry_set = ::BimTools::Zip::EntrySet.new(entries)
 
     assert_equal(entries[0, 2].sort, entry_set.glob('a/{a,b}').sort)
   end

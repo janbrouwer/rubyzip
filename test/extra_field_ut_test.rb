@@ -13,7 +13,7 @@ class ZipExtraFieldUTTest < MiniTest::Test
 
   def test_parse
     PARSE_TESTS.each do |bin, flags, a, c, m|
-      ut = ::Zip::ExtraField::UniversalTime.new(bin)
+      ut = ::BimTools::Zip::ExtraField::UniversalTime.new(bin)
       assert_equal(flags, ut.flag)
       assert(ut.atime.nil? == a)
       assert(ut.ctime.nil? == c)
@@ -22,7 +22,7 @@ class ZipExtraFieldUTTest < MiniTest::Test
   end
 
   def test_parse_size_zero
-    ut = ::Zip::ExtraField::UniversalTime.new("UT\x00")
+    ut = ::BimTools::Zip::ExtraField::UniversalTime.new("UT\x00")
     assert_equal(0b000, ut.flag)
     assert_nil(ut.atime)
     assert_nil(ut.ctime)
@@ -30,7 +30,7 @@ class ZipExtraFieldUTTest < MiniTest::Test
   end
 
   def test_parse_size_nil
-    ut = ::Zip::ExtraField::UniversalTime.new('UT')
+    ut = ::BimTools::Zip::ExtraField::UniversalTime.new('UT')
     assert_equal(0b000, ut.flag)
     assert_nil(ut.atime)
     assert_nil(ut.ctime)
@@ -38,7 +38,7 @@ class ZipExtraFieldUTTest < MiniTest::Test
   end
 
   def test_parse_nil
-    ut = ::Zip::ExtraField::UniversalTime.new
+    ut = ::BimTools::Zip::ExtraField::UniversalTime.new
     assert_equal(0b000, ut.flag)
     assert_nil(ut.atime)
     assert_nil(ut.ctime)
@@ -46,8 +46,8 @@ class ZipExtraFieldUTTest < MiniTest::Test
   end
 
   def test_set_clear_times
-    time = ::Zip::DOSTime.now
-    ut = ::Zip::ExtraField::UniversalTime.new
+    time = ::BimTools::Zip::DOSTime.now
+    ut = ::BimTools::Zip::ExtraField::UniversalTime.new
     assert_equal(0b000, ut.flag)
 
     ut.mtime = time
@@ -76,8 +76,8 @@ class ZipExtraFieldUTTest < MiniTest::Test
   end
 
   def test_pack
-    time = ::Zip::DOSTime.at('PS>A'.unpack1('l<'))
-    ut = ::Zip::ExtraField::UniversalTime.new
+    time = ::BimTools::Zip::DOSTime.at('PS>A'.unpack1('l<'))
+    ut = ::BimTools::Zip::ExtraField::UniversalTime.new
     assert_equal("\x00", ut.pack_for_local)
     assert_equal("\x00", ut.pack_for_c_dir)
 

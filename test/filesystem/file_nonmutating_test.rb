@@ -4,7 +4,7 @@ require 'zip/filesystem'
 class ZipFsFileNonmutatingTest < MiniTest::Test
   def setup
     @zipsha = Digest::SHA1.file('test/data/zipWithDirs.zip')
-    @zip_file = ::Zip::File.new('test/data/zipWithDirs.zip')
+    @zip_file = ::BimTools::Zip::File.new('test/data/zipWithDirs.zip')
   end
 
   def teardown
@@ -151,7 +151,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_utime
-    t_now = ::Zip::DOSTime.now
+    t_now = ::BimTools::Zip::DOSTime.now
     t_bak = @zip_file.file.mtime('file1')
     @zip_file.file.utime(t_now, 'file1')
     assert_equal(t_now, @zip_file.file.mtime('file1'))
@@ -247,7 +247,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
     assert(!@zip_file.file.zero?('file1'))
     assert(@zip_file.file.zero?('dir1'))
     block_called = false
-    ::Zip::File.open('test/data/generated/5entry.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/5entry.zip') do |zf|
       block_called = true
       assert(zf.file.zero?('test/data/generated/empty.txt'))
     end
@@ -256,7 +256,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
     assert(!@zip_file.file.stat('file1').zero?)
     assert(@zip_file.file.stat('dir1').zero?)
     block_called = false
-    ::Zip::File.open('test/data/generated/5entry.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/5entry.zip') do |zf|
       block_called = true
       assert(zf.file.stat('test/data/generated/empty.txt').zero?)
     end
@@ -264,7 +264,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_expand_path
-    ::Zip::File.open('test/data/zipWithDirs.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/zipWithDirs.zip') do |zf|
       assert_equal('/', zf.file.expand_path('.'))
       zf.dir.chdir 'dir1'
       assert_equal('/dir1', zf.file.expand_path('.'))
@@ -275,17 +275,17 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_mtime
-    assert_equal(::Zip::DOSTime.at(1_027_694_306),
+    assert_equal(::BimTools::Zip::DOSTime.at(1_027_694_306),
                  @zip_file.file.mtime('dir2/file21'))
-    assert_equal(::Zip::DOSTime.at(1_027_690_863),
+    assert_equal(::BimTools::Zip::DOSTime.at(1_027_690_863),
                  @zip_file.file.mtime('dir2/dir21'))
     assert_raises(Errno::ENOENT) do
       @zip_file.file.mtime('noSuchEntry')
     end
 
-    assert_equal(::Zip::DOSTime.at(1_027_694_306),
+    assert_equal(::BimTools::Zip::DOSTime.at(1_027_694_306),
                  @zip_file.file.stat('dir2/file21').mtime)
-    assert_equal(::Zip::DOSTime.at(1_027_690_863),
+    assert_equal(::BimTools::Zip::DOSTime.at(1_027_690_863),
                  @zip_file.file.stat('dir2/dir21').mtime)
   end
 
@@ -300,8 +300,8 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_ntfs_time
-    ::Zip::File.open('test/data/ntfs.zip') do |zf|
-      t = ::Zip::DOSTime.at(1_410_496_497.405178)
+    ::BimTools::Zip::File.open('test/data/ntfs.zip') do |zf|
+      t = ::BimTools::Zip::DOSTime.at(1_410_496_497.405178)
       assert_equal(zf.file.mtime('data.txt'), t)
       assert_equal(zf.file.atime('data.txt'), t)
       assert_equal(zf.file.ctime('data.txt'), t)
@@ -401,7 +401,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_foreach
-    ::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
       ref = []
       File.foreach('test/data/file1.txt') { |e| ref << e }
       index = 0
@@ -415,7 +415,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
       assert_equal(ref.size, index)
     end
 
-    ::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
       ref = []
       File.foreach('test/data/file1.txt', ' ') { |e| ref << e }
       index = 0
@@ -431,7 +431,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_glob
-    ::Zip::File.open('test/data/globTest.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/globTest.zip') do |zf|
       {
         'globTest/foo.txt' => ['globTest/foo.txt'],
         '*/foo.txt'        => ['globTest/foo.txt'],
@@ -441,7 +441,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
         '*/foo/**/*.txt'   => ['globTest/foo/bar/baz/foo.txt']
       }.each do |spec, expected_results|
         results = zf.glob(spec)
-        assert(results.all? { |entry| entry.kind_of? ::Zip::Entry })
+        assert(results.all? { |entry| entry.kind_of? ::BimTools::Zip::Entry })
 
         result_strings = results.map(&:to_s)
         missing_matches = expected_results - result_strings
@@ -452,7 +452,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
       end
     end
 
-    ::Zip::File.open('test/data/globTest.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/globTest.zip') do |zf|
       results = []
       zf.glob('**/foo.txt') do |match|
         results << "<#{match.class.name}: #{match}>"
@@ -483,7 +483,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   #  end
 
   def test_readlines
-    ::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
       orig_file = ::File.readlines('test/data/file1.txt')
       zip_file = zf.file.readlines('test/data/file1.txt')
 
@@ -495,7 +495,7 @@ class ZipFsFileNonmutatingTest < MiniTest::Test
   end
 
   def test_read
-    ::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/generated/zipWithDir.zip') do |zf|
       orig_file = ::File.read('test/data/file1.txt')
 
       # Ruby replaces \n with \r\n automatically on windows

@@ -3,7 +3,7 @@ require 'zip/ioextras'
 
 class AbstractOutputStreamTest < MiniTest::Test
   class TestOutputStream
-    include ::Zip::IOExtras::AbstractOutputStream
+    include ::BimTools::Zip::IOExtras::AbstractOutputStream
 
     attr_accessor :buffer
 

@@ -9,7 +9,7 @@ class AbstractInputStreamTest < MiniTest::Test
                 'this is the last line']
   TEST_STRING = TEST_LINES.join
   class TestAbstractInputStream
-    include ::Zip::IOExtras::AbstractInputStream
+    include ::BimTools::Zip::IOExtras::AbstractInputStream
 
     def initialize(string)
       super()

@@ -15,12 +15,12 @@ class ZipCaseSensitivityTest < MiniTest::Test
     ::Zip.case_insensitive_match = false
 
     SRC_FILES.each { |fn, _en| assert(::File.exist?(fn)) }
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
 
     SRC_FILES.each { |fn, en| zf.add(en, fn) }
     zf.close
 
-    zf_read = ::Zip::File.new(EMPTY_FILENAME)
+    zf_read = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal(SRC_FILES.size, zf_read.entries.length)
     SRC_FILES.each_with_index do |a, i|
       assert_equal(a.last, zf_read.entries[i].name)
@@ -34,7 +34,7 @@ class ZipCaseSensitivityTest < MiniTest::Test
     ::Zip.case_insensitive_match = true
 
     SRC_FILES.each { |fn, _en| assert(::File.exist?(fn)) }
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
 
     assert_raises Zip::EntryExistsError do
       SRC_FILES.each { |fn, en| zf.add(en, fn) }
@@ -46,14 +46,14 @@ class ZipCaseSensitivityTest < MiniTest::Test
     ::Zip.case_insensitive_match = false
 
     SRC_FILES.each { |fn, _en| assert(::File.exist?(fn)) }
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
 
     SRC_FILES.each { |fn, en| zf.add(en, fn) }
     zf.close
 
     ::Zip.case_insensitive_match = true
 
-    zf_read = ::Zip::File.new(EMPTY_FILENAME)
+    zf_read = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal(SRC_FILES.collect { |_fn, en| en.downcase }.uniq.size, zf_read.entries.length)
     assert_equal(SRC_FILES.last.last.downcase, zf_read.entries.first.name.downcase)
     AssertEntry.assert_contents(

@@ -88,7 +88,7 @@ class ZipFileGenerator
   def write
     entries = Dir.entries(@input_dir) - %w[. ..]
 
-    ::Zip::File.open(@output_file, ::Zip::File::CREATE) do |zipfile|
+    ::BimTools::Zip::File.open(@output_file, ::BimTools::Zip::File::CREATE) do |zipfile|
       write_entries entries, '', zipfile
     end
   end
@@ -173,7 +173,7 @@ Zip::File.open('foo.zip') do |zip_file|
 end
 ```
 
-#### Notice about ::Zip::InputStream
+#### Notice about ::BimTools::Zip::InputStream
 
 `::Zip::InputStream` usable for fast reading zip file content because it not read Central directory.
 

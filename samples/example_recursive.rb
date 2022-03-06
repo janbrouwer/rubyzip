@@ -21,7 +21,7 @@ class ZipFileGenerator
   def write
     entries = Dir.entries(@input_dir) - %w[. ..]
 
-    ::Zip::File.open(@output_file, ::Zip::File::CREATE) do |zipfile|
+    ::BimTools::Zip::File.open(@output_file, ::BimTools::Zip::File::CREATE) do |zipfile|
       write_entries entries, '', zipfile
     end
   end

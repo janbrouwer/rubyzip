@@ -10,7 +10,7 @@ class ZipLocalEntryTest < MiniTest::Test
 
   def test_read_local_entry_header_of_first_test_zip_entry
     ::File.open(TestZipFile::TEST_ZIP3.zip_name, 'rb') do |file|
-      entry = ::Zip::Entry.read_local_entry(file)
+      entry = ::BimTools::Zip::Entry.read_local_entry(file)
 
       assert_equal('', entry.comment)
       # Differs from windows and unix because of CR LF
@@ -19,7 +19,7 @@ class ZipLocalEntryTest < MiniTest::Test
       # extra field is 21 bytes long
       # probably contains some unix attrutes or something
       # disabled: assert_equal(nil, entry.extra)
-      assert_equal(::Zip::Entry::DEFLATED, entry.compression_method)
+      assert_equal(::BimTools::Zip::Entry::DEFLATED, entry.compression_method)
       assert_equal(TestZipFile::TEST_ZIP3.entry_names[0], entry.name)
       assert_equal(::File.size(TestZipFile::TEST_ZIP3.entry_names[0]), entry.size)
       assert(!entry.directory?)
@@ -28,15 +28,15 @@ class ZipLocalEntryTest < MiniTest::Test
 
   def test_read_date_time
     ::File.open('test/data/rubycode.zip', 'rb') do |file|
-      entry = ::Zip::Entry.read_local_entry(file)
+      entry = ::BimTools::Zip::Entry.read_local_entry(file)
       assert_equal('zippedruby1.rb', entry.name)
-      assert_equal(::Zip::DOSTime.at(1_019_261_638), entry.time)
+      assert_equal(::BimTools::Zip::DOSTime.at(1_019_261_638), entry.time)
     end
   end
 
   def test_read_local_entry_from_non_zip_file
     ::File.open('test/data/file2.txt') do |file|
-      assert_nil(::Zip::Entry.read_local_entry(file))
+      assert_nil(::BimTools::Zip::Entry.read_local_entry(file))
     end
   end
 
@@ -46,16 +46,16 @@ class ZipLocalEntryTest < MiniTest::Test
     ::File.open(TestZipFile::TEST_ZIP2.zip_name) { |f| fragment = f.read(12) }
 
     fragment.extend(IOizeString).reset
-    entry = ::Zip::Entry.new
+    entry = ::BimTools::Zip::Entry.new
     entry.read_local_entry(fragment)
     raise 'ZipError expected'
-  rescue ::Zip::Error
+  rescue ::BimTools::Zip::Error
   end
 
   def test_write_entry
-    entry = ::Zip::Entry.new('file.zip', 'entry_name', 'my little comment',
+    entry = ::BimTools::Zip::Entry.new('file.zip', 'entry_name', 'my little comment',
                              'thisIsSomeExtraInformation', 100, 987_654,
-                             ::Zip::Entry::DEFLATED, 400)
+                             ::BimTools::Zip::Entry::DEFLATED, 400)
     write_to_file(LEH_FILE, CEH_FILE, entry)
     local_entry, central_entry = read_from_file(LEH_FILE, CEH_FILE)
     assert(
@@ -68,9 +68,9 @@ class ZipLocalEntryTest < MiniTest::Test
 
   def test_write_entry_with_zip64
     ::Zip.write_zip64_support = true
-    entry = ::Zip::Entry.new('file.zip', 'entry_name', 'my little comment',
+    entry = ::BimTools::Zip::Entry.new('file.zip', 'entry_name', 'my little comment',
                              'thisIsSomeExtraInformation', 100, 987_654,
-                             ::Zip::Entry::DEFLATED, 400)
+                             ::BimTools::Zip::Entry::DEFLATED, 400)
 
     write_to_file(LEH_FILE, CEH_FILE, entry)
     local_entry, central_entry = read_from_file(LEH_FILE, CEH_FILE)
@@ -92,9 +92,9 @@ class ZipLocalEntryTest < MiniTest::Test
 
   def test_write_64entry
     ::Zip.write_zip64_support = true
-    entry = ::Zip::Entry.new('bigfile.zip', 'entry_name', 'my little equine',
+    entry = ::BimTools::Zip::Entry.new('bigfile.zip', 'entry_name', 'my little equine',
                              'malformed extra field because why not',
-                             0x7766554433221100, 0xDEADBEEF, ::Zip::Entry::DEFLATED,
+                             0x7766554433221100, 0xDEADBEEF, ::BimTools::Zip::Entry::DEFLATED,
                              0x9988776655443322)
     write_to_file(LEH_FILE, CEH_FILE, entry)
     local_entry, central_entry = read_from_file(LEH_FILE, CEH_FILE)
@@ -105,7 +105,7 @@ class ZipLocalEntryTest < MiniTest::Test
   def test_rewrite_local_header64
     ::Zip.write_zip64_support = true
     buf1 = StringIO.new
-    entry = ::Zip::Entry.new('file.zip', 'entry_name')
+    entry = ::BimTools::Zip::Entry.new('file.zip', 'entry_name')
     entry.write_local_entry(buf1)
     assert(entry.extra['Zip64'].nil?, 'zip64 extra is unnecessarily present')
 
@@ -119,21 +119,21 @@ class ZipLocalEntryTest < MiniTest::Test
   end
 
   def test_read_local_offset
-    entry = ::Zip::Entry.new('file.zip', 'entry_name')
+    entry = ::BimTools::Zip::Entry.new('file.zip', 'entry_name')
     entry.local_header_offset = 12_345
     ::File.open(CEH_FILE, 'wb') { |f| entry.write_c_dir_entry(f) }
     read_entry = nil
-    ::File.open(CEH_FILE, 'rb') { |f| read_entry = ::Zip::Entry.read_c_dir_entry(f) }
+    ::File.open(CEH_FILE, 'rb') { |f| read_entry = ::BimTools::Zip::Entry.read_c_dir_entry(f) }
     compare_c_dir_entry_headers(entry, read_entry)
   end
 
   def test_read64_local_offset
     ::Zip.write_zip64_support = true
-    entry = ::Zip::Entry.new('file.zip', 'entry_name')
+    entry = ::BimTools::Zip::Entry.new('file.zip', 'entry_name')
     entry.local_header_offset = 0x0123456789ABCDEF
     ::File.open(CEH_FILE, 'wb') { |f| entry.write_c_dir_entry(f) }
     read_entry = nil
-    ::File.open(CEH_FILE, 'rb') { |f| read_entry = ::Zip::Entry.read_c_dir_entry(f) }
+    ::File.open(CEH_FILE, 'rb') { |f| read_entry = ::BimTools::Zip::Entry.read_c_dir_entry(f) }
     compare_c_dir_entry_headers(entry, read_entry)
   end
 
@@ -164,11 +164,11 @@ class ZipLocalEntryTest < MiniTest::Test
     cdir_entry = nil
 
     ::File.open(local_filename, 'rb') do |f|
-      local_entry = ::Zip::Entry.read_local_entry(f)
+      local_entry = ::BimTools::Zip::Entry.read_local_entry(f)
     end
 
     ::File.open(central_filename, 'rb') do |f|
-      cdir_entry = ::Zip::Entry.read_c_dir_entry(f)
+      cdir_entry = ::BimTools::Zip::Entry.read_c_dir_entry(f)
     end
 
     [local_entry, cdir_entry]

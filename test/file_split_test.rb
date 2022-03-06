@@ -21,11 +21,11 @@ class ZipFileSplitTest < MiniTest::Test
   end
 
   def test_split_method_respond
-    assert_respond_to ::Zip::File, :split, 'Does not have split class method'
+    assert_respond_to ::BimTools::Zip::File, :split, 'Does not have split class method'
   end
 
   def test_split
-    result = ::Zip::File.split(TEST_ZIP.zip_name, 65_536, false)
+    result = ::BimTools::Zip::File.split(TEST_ZIP.zip_name, 65_536, false)
 
     return if result.nil?
 
@@ -38,7 +38,7 @@ class ZipFileSplitTest < MiniTest::Test
       end
     end
 
-    ::Zip::File.open(UNSPLITTED_FILENAME) do |zf|
+    ::BimTools::Zip::File.open(UNSPLITTED_FILENAME) do |zf|
       zf.extract(ENTRY_TO_EXTRACT, EXTRACTED_FILENAME)
 
       assert(File.exist?(EXTRACTED_FILENAME))

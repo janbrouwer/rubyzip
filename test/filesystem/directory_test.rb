@@ -10,7 +10,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_delete
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       assert_raises(Errno::ENOENT, 'No such file or directory - NoSuchFile.txt') do
         zf.dir.delete('NoSuchFile.txt')
       end
@@ -24,7 +24,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_mkdir
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       assert_raises(Errno::EEXIST, 'File exists - dir1') do
         zf.dir.mkdir('file1')
       end
@@ -41,7 +41,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_pwd_chdir_entries
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       assert_equal('/', zf.dir.pwd)
 
       assert_raises(Errno::ENOENT, 'No such file or directory - no such dir') do
@@ -64,7 +64,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_foreach
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       block_called = false
       assert_raises(Errno::ENOENT, 'No such file or directory - noSuchDir') do
         zf.dir.foreach('noSuchDir') { |_e| block_called = true }
@@ -87,7 +87,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_chroot
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       assert_raises(NotImplementedError) do
         zf.dir.chroot
       end
@@ -101,7 +101,7 @@ class ZipFsDirectoryTest < MiniTest::Test
       'globTest/food.txt'
     ]
 
-    ::Zip::File.open(GLOB_TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(GLOB_TEST_ZIP) do |zf|
       zf.dir.glob('**/*.txt') do |f|
         assert globbed_files.include?(f.name)
       end
@@ -118,7 +118,7 @@ class ZipFsDirectoryTest < MiniTest::Test
   end
 
   def test_open_new
-    ::Zip::File.open(TEST_ZIP) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP) do |zf|
       assert_raises(Errno::ENOTDIR, 'Not a directory - file1') do
         zf.dir.new('file1')
       end
