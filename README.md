@@ -88,7 +88,7 @@ class ZipFileGenerator
   def write
     entries = Dir.entries(@input_dir) - %w[. ..]
 
-    ::Zip::File.open(@output_file, ::Zip::File::CREATE) do |zipfile|
+    ::BimTools::Zip::File.open(@output_file, ::BimTools::Zip::File::CREATE) do |zipfile|
       write_entries entries, '', zipfile
     end
   end
@@ -123,7 +123,7 @@ end
 
 ### Save zip archive entries in sorted by name state
 
-To save zip archives in sorted order like below, you need to set `::Zip.sort_entries` to `true`
+To save zip archives in sorted order like below, you need to set `::BimTools::Zip.sort_entries` to `true`
 
 ```
 Vegetable/
@@ -173,15 +173,15 @@ Zip::File.open('foo.zip') do |zip_file|
 end
 ```
 
-#### Notice about ::Zip::InputStream
+#### Notice about ::BimTools::Zip::InputStream
 
-`::Zip::InputStream` usable for fast reading zip file content because it not read Central directory.
+`::BimTools::Zip::InputStream` usable for fast reading zip file content because it not read Central directory.
 
 But there is one exception when it is not working - General Purpose Flag Bit 3.
 
 > If bit 3 (0x08) of the general-purpose flags field is set, then the CRC-32 and file sizes are not known when the header is written. The fields in the local header are filled with zero, and the CRC-32 and size are appended in a 12-byte structure (optionally preceded by a 4-byte signature) immediately after the compressed data
 
-If `::Zip::InputStream` finds such entry in the zip archive it will raise an exception.
+If `::BimTools::Zip::InputStream` finds such entry in the zip archive it will raise an exception.
 
 ### Password Protection (Experimental)
 

@@ -1,6 +1,7 @@
 require 'zip'
 
-module Zip
+module BimTools
+ module Zip
   # The ZipFileSystem API provides an API for accessing entries in
   # a zip archive that is similar to ruby's builtin File and Dir
   # classes.
@@ -13,7 +14,7 @@ module Zip
   # <code>first.txt</code>, a directory entry named <code>mydir</code>
   # and finally another normal entry named <code>second.txt</code>
   #
-  #   require 'zip/filesystem'
+  #   require_relative 'zip/filesystem'
   #
   #   Zip::File.open("my.zip", Zip::File::CREATE) {
   #     |zipfile|
@@ -26,7 +27,7 @@ module Zip
   # example writes the contents of <code>first.txt</code> from zip archive
   # <code>my.zip</code> to standard out.
   #
-  #   require 'zip/filesystem'
+  #   require_relative 'zip/filesystem'
   #
   #   Zip::File.open("my.zip") {
   #     |zipfile|
@@ -620,6 +621,7 @@ module Zip
   class File
     include FileSystem
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

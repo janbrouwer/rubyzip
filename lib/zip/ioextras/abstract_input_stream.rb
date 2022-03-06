@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module IOExtras
     # Implements many of the convenience methods of IO
     # such as gets, getc, readline and readlines
@@ -108,4 +109,5 @@ module Zip
       alias_method :each, :each_line
     end
   end
+ end
 end

@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class ExtraField < Hash
     ID_MAP = {}
 
@@ -86,15 +87,16 @@ module Zip
     alias length local_size
     alias size local_size
   end
+ end
 end
 
-require 'zip/extra_field/generic'
-require 'zip/extra_field/universal_time'
-require 'zip/extra_field/old_unix'
-require 'zip/extra_field/unix'
-require 'zip/extra_field/zip64'
-require 'zip/extra_field/zip64_placeholder'
-require 'zip/extra_field/ntfs'
+require_relative 'zip/extra_field/generic'
+require_relative 'zip/extra_field/universal_time'
+require_relative 'zip/extra_field/old_unix'
+require_relative 'zip/extra_field/unix'
+require_relative 'zip/extra_field/zip64'
+require_relative 'zip/extra_field/zip64_placeholder'
+require_relative 'zip/extra_field/ntfs'
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard
 # rubyzip is free software; you can redistribute it and/or

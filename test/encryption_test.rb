@@ -5,19 +5,19 @@ class EncryptionTest < MiniTest::Test
   INPUT_FILE1 = 'test/data/file1.txt'
 
   def setup
-    @default_compression = Zip.default_compression
-    Zip.default_compression = ::Zlib::DEFAULT_COMPRESSION
+    @default_compression = BimTools::Zip.default_compression
+    BimTools::Zip.default_compression = ::Zlib::DEFAULT_COMPRESSION
   end
 
   def teardown
-    Zip.default_compression = @default_compression
+    BimTools::Zip.default_compression = @default_compression
   end
 
   def test_encrypt
     test_file = open(ENCRYPT_ZIP_TEST_FILE, 'rb').read
 
     @rand = [250, 143, 107, 13, 143, 22, 155, 75, 228, 150, 12]
-    @output = ::Zip::DOSTime.stub(:now, ::Zip::DOSTime.new(2014, 12, 17, 15, 56, 24)) do
+    @output = ::BimTools::Zip::DOSTime.stub(:now, ::BimTools::Zip::DOSTime.new(2014, 12, 17, 15, 56, 24)) do
       Random.stub(:rand, ->(_range) { @rand.shift }) do
         Zip::OutputStream.write_buffer(::StringIO.new(''), Zip::TraditionalEncrypter.new('password')) do |zos|
           zos.put_next_entry('file1.txt')

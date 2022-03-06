@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class StreamableStream < DelegateClass(Entry) # nodoc:all
     def initialize(entry)
       super(entry)
@@ -42,13 +43,14 @@ module Zip
 
     def write_to_zip_output_stream(aZipOutputStream)
       aZipOutputStream.put_next_entry(self)
-      get_input_stream { |is| ::Zip::IOExtras.copy_stream(aZipOutputStream, is) }
+      get_input_stream { |is| ::BimTools::Zip::IOExtras.copy_stream(aZipOutputStream, is) }
     end
 
     def clean_up
       @temp_file.unlink
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

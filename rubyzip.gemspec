@@ -2,11 +2,11 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'zip/version'
+require_relative 'zip/version'
 
 Gem::Specification.new do |s|
   s.name                  = 'rubyzip'
-  s.version               = ::Zip::VERSION
+  s.version               = ::BimTools::Zip::VERSION
   s.authors               = ['Alexander Simonov']
   s.email                 = ['alex@simonov.me']
   s.homepage              = 'http://github.com/rubyzip/rubyzip'

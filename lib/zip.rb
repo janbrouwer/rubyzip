@@ -5,34 +5,35 @@ require 'tmpdir'
 require 'fileutils'
 require 'stringio'
 require 'zlib'
-require 'zip/dos_time'
-require 'zip/ioextras'
+require_relative 'zip/dos_time'
+require_relative 'zip/ioextras'
 require 'rbconfig'
-require 'zip/entry'
-require 'zip/extra_field'
-require 'zip/entry_set'
-require 'zip/central_directory'
-require 'zip/file'
-require 'zip/input_stream'
-require 'zip/output_stream'
-require 'zip/decompressor'
-require 'zip/compressor'
-require 'zip/null_decompressor'
-require 'zip/null_compressor'
-require 'zip/null_input_stream'
-require 'zip/pass_thru_compressor'
-require 'zip/pass_thru_decompressor'
-require 'zip/crypto/encryption'
-require 'zip/crypto/null_encryption'
-require 'zip/crypto/traditional_encryption'
-require 'zip/inflater'
-require 'zip/deflater'
-require 'zip/streamable_stream'
-require 'zip/streamable_directory'
-require 'zip/constants'
-require 'zip/errors'
+require_relative 'zip/entry'
+require_relative 'zip/extra_field'
+require_relative 'zip/entry_set'
+require_relative 'zip/central_directory'
+require_relative 'zip/file'
+require_relative 'zip/input_stream'
+require_relative 'zip/output_stream'
+require_relative 'zip/decompressor'
+require_relative 'zip/compressor'
+require_relative 'zip/null_decompressor'
+require_relative 'zip/null_compressor'
+require_relative 'zip/null_input_stream'
+require_relative 'zip/pass_thru_compressor'
+require_relative 'zip/pass_thru_decompressor'
+require_relative 'zip/crypto/encryption'
+require_relative 'zip/crypto/null_encryption'
+require_relative 'zip/crypto/traditional_encryption'
+require_relative 'zip/inflater'
+require_relative 'zip/deflater'
+require_relative 'zip/streamable_stream'
+require_relative 'zip/streamable_directory'
+require_relative 'zip/constants'
+require_relative 'zip/errors'
 
-module Zip
+module BimTools
+ module Zip
   extend self
   attr_accessor :unicode_names,
                 :on_exists_proc,
@@ -64,6 +65,7 @@ module Zip
   end
 
   reset!
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

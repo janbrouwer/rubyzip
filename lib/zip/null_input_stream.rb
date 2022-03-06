@@ -1,8 +1,10 @@
-module Zip
+module BimTools
+ module Zip
   module NullInputStream #:nodoc:all
-    include ::Zip::NullDecompressor
-    include ::Zip::IOExtras::AbstractInputStream
+    include ::BimTools::Zip::NullDecompressor
+    include ::BimTools::Zip::IOExtras::AbstractInputStream
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

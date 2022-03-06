@@ -11,11 +11,11 @@ class ZipFileExtractTest < MiniTest::Test
   end
 
   def teardown
-    ::Zip.reset!
+    ::BimTools::Zip.reset!
   end
 
   def test_extract
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       zf.extract(ENTRY_TO_EXTRACT, EXTRACTED_FILENAME)
 
       assert(File.exist?(EXTRACTED_FILENAME))
@@ -37,8 +37,8 @@ class ZipFileExtractTest < MiniTest::Test
     writtenText = 'written text'
     ::File.open(EXTRACTED_FILENAME, 'w') { |f| f.write(writtenText) }
 
-    assert_raises(::Zip::DestinationFileExistsError) do
-      ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    assert_raises(::BimTools::Zip::DestinationFileExistsError) do
+      ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
         zf.extract(zf.entries.first, EXTRACTED_FILENAME)
       end
     end
@@ -52,7 +52,7 @@ class ZipFileExtractTest < MiniTest::Test
     ::File.open(EXTRACTED_FILENAME, 'w') { |f| f.write(writtenText) }
 
     gotCalledCorrectly = false
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       zf.extract(zf.entries.first, EXTRACTED_FILENAME) do |entry, extractLoc|
         gotCalledCorrectly = zf.entries.first == entry &&
                              extractLoc == EXTRACTED_FILENAME
@@ -67,7 +67,7 @@ class ZipFileExtractTest < MiniTest::Test
   end
 
   def test_extract_non_entry
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert_raises(Errno::ENOENT) { zf.extract('nonExistingEntry', 'nonExistingEntry') }
   ensure
     zf.close if zf
@@ -76,7 +76,7 @@ class ZipFileExtractTest < MiniTest::Test
   def test_extract_non_entry_2
     outFile = 'outfile'
     assert_raises(Errno::ENOENT) do
-      zf = ::Zip::File.new(TEST_ZIP.zip_name)
+      zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
       nonEntry = 'hotdog-diddelidoo'
       assert(!zf.entries.include?(nonEntry))
       zf.extract(nonEntry, outFile)
@@ -97,14 +97,14 @@ class ZipFileExtractTest < MiniTest::Test
       true_size = 500_000
       fake_size = 1
 
-      ::Zip::File.open(real_zip, ::Zip::File::CREATE) do |zf|
+      ::BimTools::Zip::File.open(real_zip, ::BimTools::Zip::File::CREATE) do |zf|
         zf.get_output_stream(file_name) do |os|
           os.write 'a' * true_size
         end
       end
 
       compressed_size = nil
-      ::Zip::File.open(real_zip) do |zf|
+      ::BimTools::Zip::File.open(real_zip) do |zf|
         a_entry = zf.find_entry(file_name)
         compressed_size = a_entry.compressed_size
         assert_equal true_size, a_entry.size
@@ -122,17 +122,17 @@ class ZipFileExtractTest < MiniTest::Test
       end
 
       Dir.chdir tmp do
-        ::Zip::File.open(fake_zip) do |zf|
+        ::BimTools::Zip::File.open(fake_zip) do |zf|
           a_entry = zf.find_entry(file_name)
           assert_equal fake_size, a_entry.size
 
-          ::Zip.validate_entry_sizes = false
+          ::BimTools::Zip.validate_entry_sizes = false
           a_entry.extract
           assert_equal true_size, File.size(file_name)
           FileUtils.rm file_name
 
-          ::Zip.validate_entry_sizes = true
-          error = assert_raises ::Zip::EntrySizeError do
+          ::BimTools::Zip.validate_entry_sizes = true
+          error = assert_raises ::BimTools::Zip::EntrySizeError do
             a_entry.extract
           end
           assert_equal \

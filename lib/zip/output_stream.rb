@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # ZipOutputStream is the basic class for writing zip files. It is
   # possible to create a ZipOutputStream object directly, passing
   # the zip file name to the constructor, but more often than not
@@ -14,11 +15,11 @@ module Zip
   #
   # Please refer to ZipInputStream for example code.
   #
-  # java.util.zip.ZipOutputStream is the original inspiration for this
+  # java.util.BimTools::Zip.ZipOutputStream is the original inspiration for this
   # class.
 
   class OutputStream
-    include ::Zip::IOExtras::AbstractOutputStream
+    include ::BimTools::Zip::IOExtras::AbstractOutputStream
 
     attr_accessor :comment
 
@@ -35,9 +36,9 @@ module Zip
                        else
                          ::File.new(@file_name, 'wb')
                        end
-      @entry_set = ::Zip::EntrySet.new
-      @compressor = ::Zip::NullCompressor.instance
-      @encrypter = encrypter || ::Zip::NullEncrypter.new
+      @entry_set = ::BimTools::Zip::EntrySet.new
+      @compressor = ::BimTools::Zip::NullCompressor.instance
+      @encrypter = encrypter || ::BimTools::Zip::NullEncrypter.new
       @closed = false
       @current_entry = nil
       @comment = nil
@@ -85,7 +86,7 @@ module Zip
 
     # Closes the current entry and opens a new for writing.
     # +entry+ can be a ZipEntry object or a string.
-    def put_next_entry(entry_name, comment = nil, extra = nil, compression_method = Entry::DEFLATED, level = Zip.default_compression)
+    def put_next_entry(entry_name, comment = nil, extra = nil, compression_method = Entry::DEFLATED, level = BimTools::Zip.default_compression)
       raise Error, 'zip stream is closed' if @closed
       new_entry = if entry_name.kind_of?(Entry)
                     entry_name
@@ -112,7 +113,7 @@ module Zip
       @compressor = NullCompressor.instance
       entry.get_raw_input_stream do |is|
         is.seek(src_pos, IO::SEEK_SET)
-        ::Zip::Entry.read_local_entry(is)
+        ::BimTools::Zip::Entry.read_local_entry(is)
         IOExtras.copy_stream_n(@output_stream, is, entry.compressed_size)
       end
       @compressor = NullCompressor.instance
@@ -130,10 +131,10 @@ module Zip
       @output_stream << @encrypter.data_descriptor(@current_entry.crc, @current_entry.compressed_size, @current_entry.size)
       @current_entry.gp_flags |= @encrypter.gp_flags
       @current_entry = nil
-      @compressor = ::Zip::NullCompressor.instance
+      @compressor = ::BimTools::Zip::NullCompressor.instance
     end
 
-    def init_next_entry(entry, level = Zip.default_compression)
+    def init_next_entry(entry, level = BimTools::Zip.default_compression)
       finalize_current_entry
       @entry_set << entry
       entry.write_local_entry(@output_stream)
@@ -145,11 +146,11 @@ module Zip
     def get_compressor(entry, level)
       case entry.compression_method
       when Entry::DEFLATED then
-        ::Zip::Deflater.new(@output_stream, level, @encrypter)
+        ::BimTools::Zip::Deflater.new(@output_stream, level, @encrypter)
       when Entry::STORED then
-        ::Zip::PassThruCompressor.new(@output_stream)
+        ::BimTools::Zip::PassThruCompressor.new(@output_stream)
       else
-        raise ::Zip::CompressionMethodError,
+        raise ::BimTools::Zip::CompressionMethodError,
               "Invalid compression method: '#{entry.compression_method}'"
       end
     end
@@ -182,6 +183,7 @@ module Zip
       self
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

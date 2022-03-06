@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class CentralDirectory
     include Enumerable
 
@@ -26,7 +27,7 @@ module Zip
       @entry_set.each { |entry| entry.write_c_dir_entry(io) }
       eocd_offset = io.tell
       cdir_size = eocd_offset - cdir_offset
-      if ::Zip.write_zip64_support
+      if ::BimTools::Zip.write_zip64_support
         need_zip64_eocd = cdir_offset > 0xFFFFFFFF || cdir_size > 0xFFFFFFFF || @entry_set.size > 0xFFFF
         need_zip64_eocd ||= @entry_set.any? { |entry| entry.extra['Zip64'] }
         if need_zip64_eocd
@@ -201,6 +202,7 @@ module Zip
       @entry_set.entries.sort == other.entries.sort && comment == other.comment
     end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

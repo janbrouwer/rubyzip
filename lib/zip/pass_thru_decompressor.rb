@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class PassThruDecompressor < Decompressor #:nodoc:all
     def initialize(input_stream, chars_to_read)
       super(input_stream)
@@ -23,7 +24,7 @@ module Zip
     end
 
     def produce_input
-      sysread(::Zip::Decompressor::CHUNK_SIZE)
+      sysread(::BimTools::Zip::Decompressor::CHUNK_SIZE)
     end
 
     def input_finished?
@@ -33,6 +34,7 @@ module Zip
     alias eof input_finished?
     alias eof? input_finished?
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

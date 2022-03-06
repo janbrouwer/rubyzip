@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # Info-ZIP Additional timestamp field
   class ExtraField::UniversalTime < ExtraField::Generic
     HEADER_ID = 'UT'
@@ -19,9 +20,9 @@ module Zip
       size, content = initial_parse(binstr)
       size || return
       @flag, mtime, atime, ctime = content.unpack('CVVV')
-      mtime && @mtime ||= ::Zip::DOSTime.at(mtime)
-      atime && @atime ||= ::Zip::DOSTime.at(atime)
-      ctime && @ctime ||= ::Zip::DOSTime.at(ctime)
+      mtime && @mtime ||= ::BimTools::Zip::DOSTime.at(mtime)
+      atime && @atime ||= ::BimTools::Zip::DOSTime.at(atime)
+      ctime && @ctime ||= ::BimTools::Zip::DOSTime.at(ctime)
     end
 
     def ==(other)
@@ -44,4 +45,5 @@ module Zip
       s
     end
   end
+ end
 end

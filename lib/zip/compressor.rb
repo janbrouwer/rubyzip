@@ -1,7 +1,9 @@
-module Zip
+module BimTools
+ module Zip
   class Compressor #:nodoc:all
     def finish; end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

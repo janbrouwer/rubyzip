@@ -1,9 +1,9 @@
 require 'test_helper'
-require 'zip/filesystem'
+require_relative 'zip/filesystem'
 
 class ZipFsFileStatTest < MiniTest::Test
   def setup
-    @zip_file = ::Zip::File.new('test/data/zipWithDirs.zip')
+    @zip_file = ::BimTools::Zip::File.new('test/data/zipWithDirs.zip')
   end
 
   def teardown

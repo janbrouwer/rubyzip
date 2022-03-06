@@ -7,7 +7,8 @@ $: << '../lib'
 require 'zip'
 require 'find'
 
-module Zip
+module BimTools
+ module Zip
   module ZipFind
     def self.find(path, zipFilePattern = /\.zip$/i)
       Find.find(path) do |fileName|
@@ -32,7 +33,7 @@ module Zip
 end
 
 if $0 == __FILE__
-  module ZipFindConsoleRunner
+ module ZipFindConsoleRunner
     PATH_ARG_INDEX = 0
     FILENAME_PATTERN_ARG_INDEX = 1
     ZIPFILE_PATTERN_ARG_INDEX = 2
@@ -63,4 +64,5 @@ if $0 == __FILE__
   end
 
   ZipFindConsoleRunner.run(ARGV)
+ end
 end

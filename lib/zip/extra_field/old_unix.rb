@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   # Olf Info-ZIP Extra for UNIX uid/gid and file timestampes
   class ExtraField::OldUnix < ExtraField::Generic
     HEADER_ID = 'UX'
@@ -41,4 +42,5 @@ module Zip
       [@atime, @mtime].pack('VV')
     end
   end
+ end
 end

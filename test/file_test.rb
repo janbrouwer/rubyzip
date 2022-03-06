@@ -8,13 +8,13 @@ class ZipFileTest < MiniTest::Test
   OK_DELETE_MOVED_FILE = 'test/data/generated/okToDeleteMoved.txt'
 
   def teardown
-    ::Zip.write_zip64_support = false
+    ::BimTools::Zip.write_zip64_support = false
   end
 
   def test_create_from_scratch_to_buffer
     comment = 'a short comment'
 
-    buffer = ::Zip::File.add_buffer do |zf|
+    buffer = ::BimTools::Zip::File.add_buffer do |zf|
       zf.get_output_stream('myFile') { |os| os.write 'myFile contains just this' }
       zf.mkdir('dir1')
       zf.comment = comment
@@ -22,7 +22,7 @@ class ZipFileTest < MiniTest::Test
 
     ::File.open(EMPTY_FILENAME, 'wb') { |file| file.write buffer.string }
 
-    zfRead = ::Zip::File.new(EMPTY_FILENAME)
+    zfRead = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal(comment, zfRead.comment)
     assert_equal(2, zfRead.entries.length)
   end
@@ -30,13 +30,13 @@ class ZipFileTest < MiniTest::Test
   def test_create_from_scratch
     comment = 'a short comment'
 
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
     zf.get_output_stream('myFile') { |os| os.write 'myFile contains just this' }
     zf.mkdir('dir1')
     zf.comment = comment
     zf.close
 
-    zfRead = ::Zip::File.new(EMPTY_FILENAME)
+    zfRead = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal(comment, zfRead.comment)
     assert_equal(2, zfRead.entries.length)
   end
@@ -44,26 +44,26 @@ class ZipFileTest < MiniTest::Test
   def test_create_from_scratch_with_old_create_parameter
     comment = 'a short comment'
 
-    zf = ::Zip::File.new(EMPTY_FILENAME, 1)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, 1)
     zf.get_output_stream('myFile') { |os| os.write 'myFile contains just this' }
     zf.mkdir('dir1')
     zf.comment = comment
     zf.close
 
-    zfRead = ::Zip::File.new(EMPTY_FILENAME)
+    zfRead = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal(comment, zfRead.comment)
     assert_equal(2, zfRead.entries.length)
   end
 
   def test_get_input_stream_stored_with_gpflag_bit3
-    ::Zip::File.open('test/data/gpbit3stored.zip') do |zf|
+    ::BimTools::Zip::File.open('test/data/gpbit3stored.zip') do |zf|
       assert_equal("foo\n", zf.read("foo.txt"))
     end
   end
 
   def test_get_output_stream
     entryCount = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       entryCount = zf.size
       zf.get_output_stream('newEntry.txt') do |os|
         os.write 'Putting stuff in newEntry.txt'
@@ -77,7 +77,7 @@ class ZipFileTest < MiniTest::Test
       assert_equal(entryCount + 1, zf.size)
       assert_equal('Putting stuff in data/generated/empty.txt', zf.read('test/data/generated/empty.txt'))
 
-      custom_entry_args = [TEST_COMMENT, TEST_EXTRA, TEST_COMPRESSED_SIZE, TEST_CRC, ::Zip::Entry::STORED, TEST_SIZE, TEST_TIME]
+      custom_entry_args = [TEST_COMMENT, TEST_EXTRA, TEST_COMPRESSED_SIZE, TEST_CRC, ::BimTools::Zip::Entry::STORED, TEST_SIZE, TEST_TIME]
       zf.get_output_stream('entry_with_custom_args.txt', nil, *custom_entry_args) do |os|
         os.write 'Some data'
       end
@@ -95,7 +95,7 @@ class ZipFileTest < MiniTest::Test
       end
     end
 
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_equal(entryCount + 3, zf.size)
       assert_equal('Putting stuff in newEntry.txt', zf.read('newEntry.txt'))
       assert_equal('Putting stuff in data/generated/empty.txt', zf.read('test/data/generated/empty.txt'))
@@ -105,21 +105,21 @@ class ZipFileTest < MiniTest::Test
 
   def test_open_buffer_with_string
     string = File.read('test/data/rubycode.zip')
-    ::Zip::File.open_buffer string do |zf|
+    ::BimTools::Zip::File.open_buffer string do |zf|
       assert zf.entries.map { |e| e.name }.include?('zippedruby1.rb')
     end
   end
 
   def test_open_buffer_with_stringio
     string_io = StringIO.new File.read('test/data/rubycode.zip')
-    ::Zip::File.open_buffer string_io do |zf|
+    ::BimTools::Zip::File.open_buffer string_io do |zf|
       assert zf.entries.map { |e| e.name }.include?('zippedruby1.rb')
     end
   end
 
   def test_close_buffer_with_stringio
     string_io = StringIO.new File.read('test/data/rubycode.zip')
-    zf = ::Zip::File.open_buffer string_io
+    zf = ::BimTools::Zip::File.open_buffer string_io
     assert_nil zf.close
   end
 
@@ -170,12 +170,12 @@ class ZipFileTest < MiniTest::Test
 
   def test_open_buffer_without_block
     string_io = StringIO.new File.read('test/data/rubycode.zip')
-    zf = ::Zip::File.open_buffer string_io
+    zf = ::BimTools::Zip::File.open_buffer string_io
     assert zf.entries.map { |e| e.name }.include?('zippedruby1.rb')
   end
 
   def test_cleans_up_tempfiles_after_close
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
     zf.get_output_stream('myFile') do |os|
       @tempfile_path = os.path
       os.write 'myFile contains just this'
@@ -192,11 +192,11 @@ class ZipFileTest < MiniTest::Test
     srcFile = 'test/data/file2.txt'
     entryName = 'newEntryName.rb'
     assert(::File.exist?(srcFile))
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
     zf.add(entryName, srcFile)
     zf.close
 
-    zfRead = ::Zip::File.new(EMPTY_FILENAME)
+    zfRead = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     assert_equal('', zfRead.comment)
     assert_equal(1, zfRead.entries.length)
     assert_equal(entryName, zfRead.entries.first.name)
@@ -208,18 +208,18 @@ class ZipFileTest < MiniTest::Test
     srcFile = 'test/data/file2.txt'
     entryName = 'newEntryName.rb'
     assert(::File.exist?(srcFile))
-    zf = ::Zip::File.new(EMPTY_FILENAME, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(EMPTY_FILENAME, ::BimTools::Zip::File::CREATE)
     zf.add_stored(entryName, srcFile)
     zf.close
 
-    zfRead = ::Zip::File.new(EMPTY_FILENAME)
+    zfRead = ::BimTools::Zip::File.new(EMPTY_FILENAME)
     entry = zfRead.entries.first
     assert_equal('', zfRead.comment)
     assert_equal(1, zfRead.entries.length)
     assert_equal(entryName, entry.name)
     assert_equal(File.size(srcFile), entry.size)
     assert_equal(entry.size, entry.compressed_size)
-    assert_equal(::Zip::Entry::STORED, entry.compression_method)
+    assert_equal(::BimTools::Zip::Entry::STORED, entry.compression_method)
     AssertEntry.assert_contents(srcFile,
                                 zfRead.get_input_stream(entryName) { |zis| zis.read })
   end
@@ -231,15 +231,15 @@ class ZipFileTest < MiniTest::Test
     entryName = 'newEntryName.rb'
     assert_equal(::File.stat(srcZip).mode, 0o100664)
     assert(::File.exist?(srcZip))
-    zf = ::Zip::File.new(srcZip, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.new(srcZip, ::BimTools::Zip::File::CREATE)
     zf.add(entryName, srcFile)
     zf.close
     assert_equal(::File.stat(srcZip).mode, 0o100664)
   end
 
   def test_add_existing_entry_name
-    assert_raises(::Zip::EntryExistsError) do
-      ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    assert_raises(::BimTools::Zip::EntryExistsError) do
+      ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
         zf.add(zf.entries.first.name, 'test/data/file2.txt')
       end
     end
@@ -248,21 +248,21 @@ class ZipFileTest < MiniTest::Test
   def test_add_existing_entry_name_replace
     gotCalled = false
     replacedEntry = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       replacedEntry = zf.entries.first.name
       zf.add(replacedEntry, 'test/data/file2.txt') { gotCalled = true; true }
     end
     assert(gotCalled)
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_contains(zf, replacedEntry, 'test/data/file2.txt')
     end
   end
 
   def test_add_directory
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       zf.add(TestFiles::EMPTY_TEST_DIR, TestFiles::EMPTY_TEST_DIR)
     end
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       dirEntry = zf.entries.detect { |e| e.name == TestFiles::EMPTY_TEST_DIR + '/' }
       assert(dirEntry.directory?)
     end
@@ -273,14 +273,14 @@ class ZipFileTest < MiniTest::Test
 
     FileUtils.cp(TestZipFile::TEST_ZIP2.zip_name, TEST_ZIP.zip_name)
 
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(zf.entries.map { |e| e.name }.include?(entryToRemove))
     zf.remove(entryToRemove)
     assert(!zf.entries.map { |e| e.name }.include?(entryToRemove))
     assert_equal(zf.entries.map { |x| x.name }.sort, remainingEntries.sort)
     zf.close
 
-    zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(!zfRead.entries.map { |e| e.name }.include?(entryToRemove))
     assert_equal(zfRead.entries.map { |x| x.name }.sort, remainingEntries.sort)
     zfRead.close
@@ -289,7 +289,7 @@ class ZipFileTest < MiniTest::Test
   def test_rename
     entryToRename, * = TEST_ZIP.entry_names
 
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(zf.entries.map { |e| e.name }.include?(entryToRename))
 
     contents = zf.read(entryToRename)
@@ -303,7 +303,7 @@ class ZipFileTest < MiniTest::Test
 
     zf.close
 
-    zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(zfRead.entries.map { |e| e.name }.include?(newName))
     assert_equal(contents, zfRead.read(newName))
     zfRead.close
@@ -314,7 +314,7 @@ class ZipFileTest < MiniTest::Test
     ::File.unlink(zf_name) if ::File.exist?(zf_name)
     arr = []
     arr_renamed = []
-    ::Zip::File.open(zf_name, ::Zip::File::CREATE) do |zf|
+    ::BimTools::Zip::File.open(zf_name, ::BimTools::Zip::File::CREATE) do |zf|
       zf.mkdir('test')
       arr << 'test/'
       arr_renamed << 'Ztest/'
@@ -324,7 +324,7 @@ class ZipFileTest < MiniTest::Test
         arr_renamed << "Ztest/#{f}"
       end
     end
-    zf = ::Zip::File.open(zf_name)
+    zf = ::BimTools::Zip::File.open(zf_name)
     assert_equal(zf.entries.map(&:name), arr)
     zf.close
     Zip::File.open(zf_name, 'wb') do |z|
@@ -332,7 +332,7 @@ class ZipFileTest < MiniTest::Test
         z.rename(f, "Z#{f.name}")
       end
     end
-    zf = ::Zip::File.open(zf_name)
+    zf = ::BimTools::Zip::File.open(zf_name)
     assert_equal(zf.entries.map(&:name), arr_renamed)
     zf.close
     ::File.unlink(zf_name) if ::File.exist?(zf_name)
@@ -340,33 +340,33 @@ class ZipFileTest < MiniTest::Test
 
   def test_rename_to_existing_entry
     oldEntries = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) { |zf| oldEntries = zf.entries }
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) { |zf| oldEntries = zf.entries }
 
-    assert_raises(::Zip::EntryExistsError) do
-      ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    assert_raises(::BimTools::Zip::EntryExistsError) do
+      ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
         zf.rename(zf.entries[0], zf.entries[1].name)
       end
     end
 
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_equal(oldEntries.sort.map { |e| e.name }, zf.entries.sort.map { |e| e.name })
     end
   end
 
   def test_rename_to_existing_entry_overwrite
     oldEntries = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) { |zf| oldEntries = zf.entries }
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) { |zf| oldEntries = zf.entries }
 
     gotCalled = false
     renamedEntryName = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       renamedEntryName = zf.entries[0].name
       zf.rename(zf.entries[0], zf.entries[1].name) { gotCalled = true; true }
     end
 
     assert(gotCalled)
     oldEntries.delete_if { |e| e.name == renamedEntryName }
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_equal(oldEntries.sort.map { |e| e.name },
                    zf.entries.sort.map { |e| e.name })
     end
@@ -375,7 +375,7 @@ class ZipFileTest < MiniTest::Test
   def test_rename_non_entry
     nonEntry = 'bogusEntry'
     target_entry = 'target_entryName'
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(!zf.entries.include?(nonEntry))
     assert_raises(Errno::ENOENT) { zf.rename(nonEntry, target_entry) }
     zf.commit
@@ -386,8 +386,8 @@ class ZipFileTest < MiniTest::Test
 
   def test_rename_entry_to_existing_entry
     entry1, entry2, * = TEST_ZIP.entry_names
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
-    assert_raises(::Zip::EntryExistsError) { zf.rename(entry1, entry2) }
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
+    assert_raises(::BimTools::Zip::EntryExistsError) { zf.rename(entry1, entry2) }
   ensure
     zf.close
   end
@@ -395,11 +395,11 @@ class ZipFileTest < MiniTest::Test
   def test_replace
     entryToReplace = TEST_ZIP.entry_names[2]
     newEntrySrcFilename = 'test/data/file2.txt'
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     zf.replace(entryToReplace, newEntrySrcFilename)
 
     zf.close
-    zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     AssertEntry.assert_contents(newEntrySrcFilename,
                                 zfRead.get_input_stream(entryToReplace) { |is| is.read })
     AssertEntry.assert_contents(TEST_ZIP.entry_names[0],
@@ -413,19 +413,19 @@ class ZipFileTest < MiniTest::Test
 
   def test_replace_non_entry
     entryToReplace = 'nonExistingEntryname'
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_raises(Errno::ENOENT) { zf.replace(entryToReplace, 'test/data/file2.txt') }
     end
   end
 
   def test_commit
     newName = 'renamedFirst'
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     oldName = zf.entries.first
     zf.rename(oldName, newName)
     zf.commit
 
-    zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(zfRead.entries.detect { |e| e.name == newName } != nil)
     assert(zfRead.entries.detect { |e| e.name == oldName }.nil?)
     zfRead.close
@@ -438,13 +438,13 @@ class ZipFileTest < MiniTest::Test
   def test_double_commit(filename = 'test/data/generated/double_commit_test.zip')
     ::FileUtils.touch('test/data/generated/test_double_commit1.txt')
     ::FileUtils.touch('test/data/generated/test_double_commit2.txt')
-    zf = ::Zip::File.open(filename, ::Zip::File::CREATE)
+    zf = ::BimTools::Zip::File.open(filename, ::BimTools::Zip::File::CREATE)
     zf.add('test1.txt', 'test/data/generated/test_double_commit1.txt')
     zf.commit
     zf.add('test2.txt', 'test/data/generated/test_double_commit2.txt')
     zf.commit
     zf.close
-    zf2 = ::Zip::File.open(filename)
+    zf2 = ::BimTools::Zip::File.open(filename)
     assert(zf2.entries.detect { |e| e.name == 'test1.txt' } != nil)
     assert(zf2.entries.detect { |e| e.name == 'test2.txt' } != nil)
     res = system("unzip -tqq #{filename}")
@@ -452,19 +452,19 @@ class ZipFileTest < MiniTest::Test
   end
 
   def test_double_commit_zip64
-    ::Zip.write_zip64_support = true
+    ::BimTools::Zip.write_zip64_support = true
     test_double_commit('test/data/generated/double_commit_test64.zip')
   end
 
   def test_write_buffer
     newName = 'renamedFirst'
-    zf = ::Zip::File.new(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     oldName = zf.entries.first
     zf.rename(oldName, newName)
     io = ::StringIO.new('')
     buffer = zf.write_buffer(io)
     File.open(TEST_ZIP.zip_name, 'wb') { |f| f.write buffer.string }
-    zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
     assert(zfRead.entries.detect { |e| e.name == newName } != nil)
     assert(zfRead.entries.detect { |e| e.name == oldName }.nil?)
     zfRead.close
@@ -477,7 +477,7 @@ class ZipFileTest < MiniTest::Test
   # with
   def test_commit_use_zip_entry
     FileUtils.cp(TestFiles::RANDOM_ASCII_FILE1, OK_DELETE_FILE)
-    zf = ::Zip::File.open(TEST_ZIP.zip_name)
+    zf = ::BimTools::Zip::File.open(TEST_ZIP.zip_name)
     zf.add('okToDelete.txt', OK_DELETE_FILE)
     assert_contains(zf, 'okToDelete.txt')
     zf.commit
@@ -497,7 +497,7 @@ class ZipFileTest < MiniTest::Test
     renamedName = 'renamedName'
     filename_to_remove = ''
     begin
-      zf = ::Zip::File.new(TEST_ZIP.zip_name)
+      zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
       originalEntries = zf.entries.dup
 
       assert_not_contains(zf, TestFiles::RANDOM_ASCII_FILE1)
@@ -522,7 +522,7 @@ class ZipFileTest < MiniTest::Test
       zf.close
     end
     begin
-      zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+      zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
       assert_contains(zfRead, TestFiles::RANDOM_ASCII_FILE1)
       assert_contains(zfRead, renamedName)
       TestFiles::BINARY_TEST_FILES.each do |filename|
@@ -536,7 +536,7 @@ class ZipFileTest < MiniTest::Test
 
   def test_compound2
     begin
-      zf = ::Zip::File.new(TEST_ZIP.zip_name)
+      zf = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
       originalEntries = zf.entries.dup
 
       originalEntries.each do |entry|
@@ -558,7 +558,7 @@ class ZipFileTest < MiniTest::Test
       zf.close
     end
     begin
-      zfRead = ::Zip::File.new(TEST_ZIP.zip_name)
+      zfRead = ::BimTools::Zip::File.new(TEST_ZIP.zip_name)
       asciiTestFiles = TestFiles::ASCII_TEST_FILES.dup
       asciiTestFiles.shift
       asciiTestFiles.each do |filename|
@@ -572,16 +572,16 @@ class ZipFileTest < MiniTest::Test
   end
 
   def test_change_comment
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       zf.comment = 'my changed comment'
     end
-    zfRead = ::Zip::File.open(TEST_ZIP.zip_name)
+    zfRead = ::BimTools::Zip::File.open(TEST_ZIP.zip_name)
     assert_equal('my changed comment', zfRead.comment)
   end
 
   def test_preserve_file_order
     entryNames = nil
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       entryNames = zf.entries.map { |e| e.to_s }
       zf.get_output_stream('a.txt') { |os| os.write 'this is a.txt' }
       zf.get_output_stream('z.txt') { |os| os.write 'this is z.txt' }
@@ -589,7 +589,7 @@ class ZipFileTest < MiniTest::Test
       entryNames << 'a.txt' << 'z.txt' << 'k.txt'
     end
 
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_equal(entryNames, zf.entries.map { |e| e.to_s })
       entries = zf.entries.sort_by { |e| e.name }.reverse
       entries.each do |e|
@@ -598,7 +598,7 @@ class ZipFileTest < MiniTest::Test
       end
       entryNames = entries.map { |e| e.to_s }
     end
-    ::Zip::File.open(TEST_ZIP.zip_name) do |zf|
+    ::BimTools::Zip::File.open(TEST_ZIP.zip_name) do |zf|
       assert_equal(entryNames, zf.entries.map { |e| e.to_s })
     end
   end
@@ -626,14 +626,14 @@ class ZipFileTest < MiniTest::Test
   end
 
   def test_nonexistant_zip
-    assert_raises(::Zip::Error) do
-      ::Zip::File.open('fake.zip')
+    assert_raises(::BimTools::Zip::Error) do
+      ::BimTools::Zip::File.open('fake.zip')
     end
   end
 
   def test_empty_zip
-    assert_raises(::Zip::Error) do
-      ::Zip::File.open(TestFiles::NULL_FILE)
+    assert_raises(::BimTools::Zip::Error) do
+      ::BimTools::Zip::File.open(TestFiles::NULL_FILE)
     end
   end
 
@@ -641,7 +641,7 @@ class ZipFileTest < MiniTest::Test
     entry_count = 0
     File.open 'test/data/oddExtraField.zip', 'rb' do |zip_io|
       Zip::File.open_buffer zip_io.read do |zip|
-        zip.each do |_zip_entry|
+        BimTools::zip.each do |_zip_entry|
           entry_count += 1
         end
       end
@@ -650,7 +650,7 @@ class ZipFileTest < MiniTest::Test
   end
 
   def test_open_xls_does_not_raise_type_error
-    ::Zip::File.open('test/data/test.xls')
+    ::BimTools::Zip::File.open('test/data/test.xls')
   end
 
   private

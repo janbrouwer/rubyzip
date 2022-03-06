@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   module NullEncryption
     def header_bytesize
       0
@@ -36,6 +37,7 @@ module Zip
 
     def reset!(_header); end
   end
+ end
 end
 
 # Copyright (C) 2002, 2003 Thomas Sondergaard

@@ -1,4 +1,5 @@
-module Zip
+module BimTools
+ module Zip
   class Error < StandardError; end
   class EntryExistsError < Error; end
   class DestinationFileExistsError < Error; end
@@ -15,4 +16,5 @@ module Zip
   ZipCompressionMethodError = CompressionMethodError
   ZipEntryNameError = EntryNameError
   ZipInternalError = InternalError
+ end
 end

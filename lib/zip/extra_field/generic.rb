@@ -1,8 +1,9 @@
-module Zip
+module BimTools
+ module Zip
   class ExtraField::Generic
     def self.register_map
       if const_defined?(:HEADER_ID)
-        ::Zip::ExtraField::ID_MAP[const_get(:HEADER_ID)] = self
+        ::BimTools::Zip::ExtraField::ID_MAP[const_get(:HEADER_ID)] = self
       end
     end
 
@@ -40,4 +41,5 @@ module Zip
       self.class.const_get(:HEADER_ID) + [s.bytesize].pack('v') << s
     end
   end
+ end
 end
